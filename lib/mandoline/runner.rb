@@ -67,7 +67,8 @@ module Mandoline
     end
 
     def entire_file_tagged?(lines)
-      @tags.any? { |tag| lines.any? { |line| line =~ /^@#{tag}/ } }
+      first_non_empty_line = lines.find { |line| !line.strip.empty? }
+      @tags.any? { |tag| first_non_empty_line =~ /^@#{tag}/ }
     end
 
     def delete_scenario(lines, index)

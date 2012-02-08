@@ -32,6 +32,11 @@ Feature: I have one tagged scenario.
 Feature: I have one tagged scenario.
   @tag1
   Scenario: This scenario should be deleted.
+},
+      :tag_at_file_end => %{
+Feature: I have a tag at the end and should not be deleted.
+  Scenario: This scenario should not be deleted.
+@tag1
 }
     }
 
@@ -81,6 +86,10 @@ Feature: I have one tagged scenario.
     }.
       from( features.map { |_| true } ).
       to( features.map { |_| false })
+  end
+
+  it "leaves files alone which have a tag at the start of a line, but not at the top" do
+    expect { subject.run([feature_path(:tag_at_file_end)]) }.not_to change { File.read(feature_path(:tag_at_file_end)) }
   end
 
   it "deletes scenarios which are tagged" do
