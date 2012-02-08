@@ -59,11 +59,15 @@ module Compost
     end
 
     def delete_scenario(lines, index)
-      indent = lines[index][/^\s+/]
-      scenario_name = (lines[index+1] || "")[/Scenario: (.*)/, 1]
+      lines.delete_at(index) # delete tag line
 
-      lines.delete_at(index)
-      lines.delete_at(index) while lines[index] =~ /^#{indent}\s+/
+      scenario_name = lines[index][/Scenario: (.*)/, 1]
+
+      indent = lines[index][/^\s+/]
+
+      lines.delete_at(index)                                       # delete scenario line
+      lines.delete_at(index) while lines[index] =~ /^#{indent}\s+/ # delete nested lines
+      lines.delete_at(index) while lines[index] =~ /^\s+$/         # delete trailing blank lines
 
       scenario_name
     end

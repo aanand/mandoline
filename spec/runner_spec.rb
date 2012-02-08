@@ -11,11 +11,19 @@ Feature: I have no scenarios.},
       :entire_file_tagged => %{
 @tag1
 Feature: I am tagged.},
-      :one_scenario_tagged => %{
+      :scenarios_tagged => %{
 Feature: I have one tagged scenario.
   Scenario: This scenario should not be deleted.
+
+    @tag1
+  Scenario: This scenario should be deleted.
+
+  @tag2
+  Scenario: This scenario should not be deleted.
+
   @tag3 @tag1 @tag2
     Scenario: This scenario should be deleted.
+
   @tag2 # @tag1
     Scenario: This scenario should not be deleted.
 }
@@ -62,13 +70,17 @@ Feature: I have one tagged scenario.
   end
 
   it "deletes scenarios which are tagged" do
-    logger.should_receive(:scenarios_deleted).with(feature_path(:one_scenario_tagged), ["This scenario should be deleted."])
+    logger.should_receive(:scenarios_deleted).with(feature_path(:scenarios_tagged), ["This scenario should be deleted.", "This scenario should be deleted."])
 
-    expect { subject.run([feature_path(:one_scenario_tagged)]) }.to change { File.read(feature_path(:one_scenario_tagged)) }.
-      from(feature_text(:one_scenario_tagged)).
+    expect { subject.run([feature_path(:scenarios_tagged)]) }.to change { File.read(feature_path(:scenarios_tagged)) }.
+      from(feature_text(:scenarios_tagged)).
       to(%{
 Feature: I have one tagged scenario.
   Scenario: This scenario should not be deleted.
+
+  @tag2
+  Scenario: This scenario should not be deleted.
+
   @tag2 # @tag1
     Scenario: This scenario should not be deleted.
 })
