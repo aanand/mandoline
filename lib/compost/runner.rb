@@ -12,18 +12,18 @@ module Compost
         if entire_file_tagged?(lines)
           File.delete(path)
           @logger.file_deleted(path) if @logger
-        end
+        else
+          scenario_names = delete_tagged_scenarios(lines)
 
-        scenario_names = delete_tagged_scenarios(lines)
-
-        if scenario_names.any?
-          File.open(path, "w") do |f|
-            lines.each do |line|
-              f.write(line)
+          if scenario_names.any?
+            File.open(path, "w") do |f|
+              lines.each do |line|
+                f.write(line)
+              end
             end
-          end
 
-          @logger.scenarios_deleted(path, scenario_names) if @logger
+            @logger.scenarios_deleted(path, scenario_names) if @logger
+          end
         end
       end
     end

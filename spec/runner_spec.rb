@@ -26,6 +26,12 @@ Feature: I have one tagged scenario.
 
   @tag2 # @tag1
     Scenario: This scenario should not be deleted.
+},
+      :file_and_scenarios_tagged => %{
+@tag1
+Feature: I have one tagged scenario.
+  @tag1
+  Scenario: This scenario should be deleted.
 }
     }
 
@@ -62,11 +68,19 @@ Feature: I have one tagged scenario.
   end
 
   it "deletes feature files which are tagged" do
-    logger.should_receive(:file_deleted).with(feature_path(:entire_file_tagged))
+    features = [:entire_file_tagged, :file_and_scenarios_tagged]
 
-    expect { subject.run([feature_path(:entire_file_tagged)]) }.to change { File.exist?(feature_path(:entire_file_tagged)) }.
-      from(true).
-      to(false)
+    features.each do |name|
+      logger.should_receive(:file_deleted).with(feature_path(name))
+    end
+
+    expect {
+      subject.run(features.map { |name| feature_path(name) })
+    }.to change {
+      features.map { |name| File.exist?(feature_path(name)) }
+    }.
+      from( features.map { |_| true } ).
+      to( features.map { |_| false })
   end
 
   it "deletes scenarios which are tagged" do
