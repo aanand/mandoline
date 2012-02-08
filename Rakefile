@@ -1,9 +1,9 @@
 html = "index.html"
-ronn = "tmp/README.ronn"
+ronn = "README.md"
 
 directory "tmp"
 
-task :default do
-  sh "git show master:README.ronn > #{ronn}"
-  sh "ronn --html --pipe #{ronn} > #{html}"
+task :default => "tmp" do
+  sh "git show master:#{ronn} > tmp/#{ronn}"
+  sh "ronn --html --pipe tmp/#{ronn} > #{html}"
 end
