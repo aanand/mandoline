@@ -18,6 +18,7 @@ module Mandoline
     begin
       parser.parse!(args)
       raise OptionParser::MissingArgument, "--tags" unless options[:tags]
+      raise OptionParser::MissingArgument, "At least one path must be specified" if args.empty?
     rescue OptionParser::ParseError => e
       puts e.message
       puts
