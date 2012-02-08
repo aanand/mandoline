@@ -7,24 +7,36 @@ module Compost
 
     def run(paths)
       paths.each do |path|
-        lines = File.readlines(path)
+        process_file(path)
+      end
+    end
 
-        if entire_file_tagged?(lines)
-          File.delete(path)
-          @logger.file_deleted(path) if @logger
-        else
-          scenario_names = delete_tagged_scenarios(lines)
+    def process_file(path)
+      lines = File.readlines(path)
 
-          if scenario_names.any?
-            File.open(path, "w") do |f|
-              lines.each do |line|
-                f.write(line)
-              end
-            end
+      if entire_file_tagged?(lines)
+        delete_file(path)
+      else
+        delete_scenarios_from_file(path, lines)
+      end
+    end
 
-            @logger.scenarios_deleted(path, scenario_names) if @logger
+    def delete_file(path)
+      File.delete(path)
+      @logger.file_deleted(path) if @logger
+    end
+
+    def delete_scenarios_from_file(path, lines)
+      scenario_names = delete_tagged_scenarios(lines)
+
+      if scenario_names.any?
+        File.open(path, "w") do |f|
+          lines.each do |line|
+            f.write(line)
           end
         end
+
+        @logger.scenarios_deleted(path, scenario_names) if @logger
       end
     end
 
