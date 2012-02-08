@@ -1,4 +1,4 @@
-module Compost
+module Mandoline
   class Runner
     def initialize(options)
       @tags   = options[:tags]

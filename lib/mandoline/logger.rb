@@ -1,4 +1,4 @@
-module Compost
+module Mandoline
   class Logger
     def initialize(io)
       @io = io

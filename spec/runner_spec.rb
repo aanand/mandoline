@@ -1,7 +1,7 @@
-require "compost/runner"
+require "mandoline/runner"
 require "tmpdir"
 
-describe Compost::Runner do
+describe Mandoline::Runner do
   before do
     @dir = Dir.mktmpdir
 
@@ -57,7 +57,7 @@ Feature: I have one tagged scenario.
   let(:logger) { mock }
 
   subject {
-    Compost::Runner.new(
+    Mandoline::Runner.new(
       :tags => ['tag1'],
       :logger => logger
     )

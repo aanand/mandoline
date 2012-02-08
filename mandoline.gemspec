@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "compost/version"
+require "mandoline/version"
 
 Gem::Specification.new do |s|
-  s.name        = "compost"
-  s.version     = Compost::VERSION
+  s.name        = "mandoline"
+  s.version     = Mandoline::VERSION
   s.authors     = ["Aanand Prasad"]
   s.email       = ["aanand.prasad@gmail.com"]
   s.homepage    = ""
   s.summary     = %q{TODO: Write a gem summary}
   s.description = %q{TODO: Write a gem description}
 
-  s.rubyforge_project = "compost"
+  s.rubyforge_project = "mandoline"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

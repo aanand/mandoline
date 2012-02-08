@@ -1,9 +1,9 @@
-require "compost/version"
-require "compost/logger"
-require "compost/runner"
+require "mandoline/version"
+require "mandoline/logger"
+require "mandoline/runner"
 require "optparse"
 
-module Compost
+module Mandoline
   def self.run(*args)
     options = {}
 
@@ -25,7 +25,7 @@ module Compost
       exit -1
     end
 
-    options[:logger] = Compost::Logger.new(STDERR)
+    options[:logger] = Mandoline::Logger.new(STDERR)
 
     paths = if args.length == 1 && File.directory?(args.first)
               Dir.glob("#{args.first}/**/*.feature")
