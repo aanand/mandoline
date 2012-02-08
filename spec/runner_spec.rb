@@ -40,20 +40,31 @@ Feature: I have one tagged scenario.
     @files[name]
   end
 
-  subject { Compost::Runner.new(:paths => Dir.glob("#{@dir}/**/*.feature"), :tags => ['tag1']) }
+  let(:logger) { mock }
+
+  subject {
+    Compost::Runner.new(
+      :tags => ['tag1'],
+      :logger => logger
+    )
+  }
 
   it "leaves empty files alone" do
-    expect { subject.run }.not_to change { File.read(feature_path(:no_scenarios)) }
+    expect { subject.run([feature_path(:no_scenarios)]) }.not_to change { File.read(feature_path(:no_scenarios)) }
   end
 
   it "deletes feature files which are tagged" do
-    expect { subject.run }.to change { File.exist?(feature_path(:entire_file_tagged)) }.
+    logger.should_receive(:file_deleted).with(feature_path(:entire_file_tagged))
+
+    expect { subject.run([feature_path(:entire_file_tagged)]) }.to change { File.exist?(feature_path(:entire_file_tagged)) }.
       from(true).
       to(false)
   end
 
   it "deletes scenarios which are tagged" do
-    expect { subject.run }.to change { File.read(feature_path(:one_scenario_tagged)) }.
+    logger.should_receive(:scenarios_deleted).with(feature_path(:one_scenario_tagged), ["This scenario should be deleted."])
+
+    expect { subject.run([feature_path(:one_scenario_tagged)]) }.to change { File.read(feature_path(:one_scenario_tagged)) }.
       from(feature_text(:one_scenario_tagged)).
       to(%{
 Feature: I have one tagged scenario.
