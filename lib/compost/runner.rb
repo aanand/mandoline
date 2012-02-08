@@ -10,31 +10,7 @@ module Compost
         lines = File.readlines(path)
         File.delete(path) if entire_file_tagged?(lines)
 
-        i = 0
-        any_tags_found = false
-
-        while i < lines.length
-          line = lines[i]
-          tag_found = false
-
-
-          if tags_section = line[/^(\s+@\w+)+/]
-            found_tags = tags_section.scan(/@(\w+)/).flatten
-
-            if (@tags & found_tags).any?
-              tag_found = true
-              any_tags_found = true
-              indent = line[/^\s+/]
-
-              lines.delete_at(i)
-              lines.delete_at(i) while lines[i] =~ /^#{indent}\s+/
-            end
-          end
-
-          i += 1 unless tag_found
-        end
-
-        if any_tags_found
+        if delete_tagged_scenarios(lines)
           File.open(path, "w") do |f|
             lines.each do |line|
               f.write(line)
@@ -44,8 +20,42 @@ module Compost
       end
     end
 
+    def delete_tagged_scenarios(lines)
+      index = 0
+      any_tags_found = false
+
+      while index < lines.length
+        line = lines[index]
+
+        if line_tagged?(line)
+          any_tags_found = true
+          delete_line_and_nested_lines(lines, index)
+        else
+          index += 1
+        end
+      end
+
+      any_tags_found
+    end
+
+    def line_tagged?(line)
+      if tags_section = line[/^(\s+@\w+)+/]
+        found_tags = tags_section.scan(/@(\w+)/).flatten
+        (@tags & found_tags).any?
+      else
+        false
+      end
+    end
+
     def entire_file_tagged?(lines)
       @tags.any? { |tag| lines.any? { |line| line =~ /^@#{tag}/ } }
+    end
+
+    def delete_line_and_nested_lines(lines, index)
+      indent = lines[index][/^\s+/]
+
+      lines.delete_at(index)
+      lines.delete_at(index) while lines[index] =~ /^#{indent}\s+/
     end
   end
 end
