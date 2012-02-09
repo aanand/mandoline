@@ -21,7 +21,11 @@ module Mandoline
     end
 
     def color(text, code)
-      "\033[1;#{code}m#{text}\033[0m"
+      if @io.tty?
+        "\033[1;#{code}m#{text}\033[0m"
+      else
+        text
+      end
     end
   end
 end
